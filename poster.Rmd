@@ -1,0 +1,245 @@
+---
+title: "Our recent (post-2017) publications..."
+linestretch: 1.5
+blinded: true
+colorlinks: true
+numbersections: true
+---
+
+```{r Setup, include=FALSE, results="hide", warning=FALSE}
+require(knitr)
+require(pander)
+require(memisc)
+require(Cairo)
+require(ggplot2)
+require(extrafont)
+loadfonts()
+panderOptions('knitr.auto.asis', FALSE)
+
+opts_chunk$set(dev=c("png","pdf"),
+               fig.lp="fig:",
+               cache=FALSE,
+               par=TRUE,
+               echo=FALSE,
+               results="hide", ## not 'markup' or 'asis'
+               message=FALSE,
+               warning=FALSE,
+               dpi=300)
+addNotes <- function(tab, cap) {
+    tab <- gsub("\\^\\{(\\*+)\\}", "\\\\\\text{\\1}", tab)
+    paste0("\\begin{table} \\centering",
+           tab,
+           "\\\\ \\sffamily \\emph{Notes:} ",
+           "* = p < 0.05; ** = p < 0.01; *** = p < 0.001",
+           "\\caption{",
+           cap,
+           "}",
+           "\\end{table}")
+}
+
+```
+
+```{r data}
+pretty_names <- c("Nick Allen",
+                  "Michael Bacon",
+                  "Giacomo Benedetto",
+                  "Michelle Bentley",
+                  "Licia Cianetti",
+                  "Tom Dyson",
+                  "Neil Gascoigne",
+                  "Andreas Goldthau",
+                  "Ursula Hackett",
+                  "Sandra Halperin",
+                  "Chris Hanretty",
+                  "Oliver Heath",
+                  "Will Jones",
+                  "Ben O'Loughlin",
+                  "Ivica Petrikova",
+                  "Rebecca Roache",
+                  "Jonathan Seglow",
+                  "John Sellars",
+                  "James Sloam",
+                  "Kaat Smets",
+                  "Henry Somers-Hall",
+                  "Thomas Stubbs",
+                  "Dan Whistler",
+                  "Nathan Widder",
+                  "Jinghan Zeng")
+
+urls <- c("https://pure.royalholloway.ac.uk/portal/en/persons/nicholas-allen(f69c6bc8-318f-4578-961a-9a7d3cf07b21)/publications.rss",
+          "https://pure.royalholloway.ac.uk/portal/en/persons/michael-bacon(c6cd3424-0472-4985-ab96-4cce588eef01)/publications.rss",
+          "https://pure.royalholloway.ac.uk/portal/en/persons/giacomo-benedetto(7d67c091-a49e-4942-a656-a4b431769845)/publications.rss",
+          "https://pure.royalholloway.ac.uk/portal/en/persons/michelle-bentley(7cf349f5-bb36-46e8-8810-fa792348242c)/publications.rss",
+          "https://pure.royalholloway.ac.uk/portal/en/persons/licia-cianetti(eb93895b-be21-4932-88c4-5b8a727ead95)/publications.rss",
+          "https://pure.royalholloway.ac.uk/portal/en/persons/tom-dyson(ad8e5533-fbc1-43b0-984a-d66d54900ded)/publications.rss",
+          "https://pure.royalholloway.ac.uk/portal/en/persons/neil-gascoigne(39e64736-de38-4e69-b007-8db2bdfaf014)/publications.rss",
+          "https://pure.royalholloway.ac.uk/portal/en/persons/andreas-goldthau(fa61069f-7b3d-4689-b125-54cbb37c8ac4)/publications.rss",
+          "https://pure.royalholloway.ac.uk/portal/en/persons/ursula-hackett(36bc1d93-6ed9-423b-aeee-844ee6f2e5c6)/publications.rss",
+          "https://pure.royalholloway.ac.uk/portal/en/persons/sandra-halperin(a3edddc2-9123-4c9c-9a98-83bfb0f466e6)/publications.rss",
+          "https://pure.royalholloway.ac.uk/portal/en/persons/christopher-hanretty(69469d99-0aa0-4f63-87a9-b96dbd86373d)/publications.rss",
+          "https://pure.royalholloway.ac.uk/portal/en/persons/oliver-heath(5ae90ce4-2542-4f98-9168-2762f43d5ebc)/publications.rss",
+          "https://pure.royalholloway.ac.uk/portal/en/persons/william-jones(c6c4e700-3e39-4b36-bad0-860f5b1c4a7b)/publications.rss",
+          "https://pure.royalholloway.ac.uk/portal/en/persons/ben-oloughlin(1273572d-2dc3-4680-bd44-f007a312b007)/publications.rss",
+          "https://pure.royalholloway.ac.uk/portal/en/persons/ivica-petrikova(5002a317-3946-4dd6-8657-3f5f5088a7e7)/publications.rss",
+          "https://pure.royalholloway.ac.uk/portal/en/persons/rebecca-roache(59a8d9fa-c44f-4e78-9626-a78500c9013d)/publications.rss",
+          "https://pure.royalholloway.ac.uk/portal/en/persons/jonathan-seglow(6ccf091b-8111-4388-84b1-ebc6777f8a1b)/publications.rss",
+          "https://pure.royalholloway.ac.uk/portal/en/persons/john-sellars(709b3ed0-efe1-45cc-923f-9d180a42fb9a)/publications.rss",
+          "https://pure.royalholloway.ac.uk/portal/en/persons/james-sloam(bdd4ef87-7beb-4fc1-8a81-a2c9119a137e)/publications.rss",
+          "https://pure.royalholloway.ac.uk/portal/en/persons/kaat-smets(e1374f99-c608-4884-9554-10ec82dfbf69)/publications.rss",
+          "https://pure.royalholloway.ac.uk/portal/en/persons/henry-somershall(9b215915-fcd6-4567-8463-c0c39f5aed70)/publications.rss",
+          "https://pure.royalholloway.ac.uk/portal/en/persons/thomas-stubbs(bfb60e1a-01c8-40d5-9fd1-7d05810abf78)/publications.rss",
+          "https://pure.royalholloway.ac.uk/portal/en/persons/daniel-whistler(72b7b1f7-5dff-418e-a807-2b1c2e50ca31)/publications.rss",
+          "https://pure.royalholloway.ac.uk/portal/en/persons/nathan-widder(2dbed1de-b1f5-4a4b-a6a9-6758b1677469)/publications.rss",
+          "https://pure.royalholloway.ac.uk/portal/en/persons/jinghan-zeng(b9c326b1-1329-4441-992e-3f3a3aa2ad12)/publications.rss")
+
+dat <- data.frame(pretty_name = pretty_names,
+                  base = urls)
+dat <- merge(dat, data.frame(year = 2015:2020),
+             all = TRUE)
+dat$url <- paste0(dat$base,
+                  "?publicationYearsFrom=",
+                  dat$year,
+                  "&publicationYearsTo=",
+                  dat$year,
+                  "&peerreview=true")
+
+```
+
+```{r loadlibs}
+library(xml2)
+library(rvest)
+library(tidyverse)
+library(purrr)
+library(reshape2)
+```
+
+
+
+```{r parsepages}
+## Get the description field
+get_description <- function(d) {
+    sel <- "(//description)[position() > 1]//text()"
+    d %>%
+        xml_nodes(xpath = sel) %>%
+        xml_text()
+}
+
+get_title <- function(d) {
+    retval <- d %>%
+        read_html() %>%
+        html_node(xpath = "//h2[@class = 'title']") %>%
+        html_text()
+}
+
+get_properties <- function(d) {
+    retval <- d %>%
+        read_html() %>%
+        html_node(xpath = "(//table[@class = 'properties'])") %>%
+        html_table()
+    return(retval)
+}
+
+if (file.exists("cache/tidied_data.rds")) {
+    docs <- readRDS("cache/tidied_data.rds")
+} else {
+    docs <- dat %>%
+        mutate(doc = map(url, read_xml)) %>%     
+        mutate(doc = map(doc, get_description)) %>%
+        unnest()
+    
+    docs <- docs %>%
+        mutate(title = map_chr(doc, get_title),
+               properties = map(doc, get_properties)) %>% 
+        dplyr::select(pretty_name, year, title, properties) %>% 
+        unnest() %>%
+        dcast(pretty_name + year + title ~ X1, value.var = "X2")
+    
+    saveRDS(docs, file = "cache/tidied_data.rds")
+}
+
+```	
+
+
+```{r formatout}
+
+pretty_out <- function(x) {
+    ## If it's a journal
+    if (!is.na(x["Journal"])) {
+        out <- paste0(x["title"],
+                      ". *",
+                      x["Journal"],
+                      "*")
+        if (is.na(x["Volume"])) {
+            out <- paste0(out,
+                          ". In production. ")
+        } else {
+            out <- paste0(out,
+                          ", ",
+                          x["Volume"])
+            if (is.na(x["Issue number"])) {
+                out <- paste0(out, ". ")
+            } else {
+                out <- paste0(out, "(",
+                              x["Issue number"],
+                              ")")
+            }   
+        }
+        if (is.na(x["Pages (from-to)"])) {
+            out <- paste0(out, ". ")
+        } else {
+            out <- paste0(out,
+                          " ",
+                          x["Pages (from-to)"],
+                          ". ")
+        }
+        
+         
+    } else if (!is.na(x["Title of host publication"])) {
+        ## It's a chapter
+        out <- paste0(x["title"],
+                      ". In ",
+                      x["Editors"],
+                      " (ed.), *",
+                      x["Title of host publication"],
+                      "*. ",
+                      x["Publisher"],
+                      ".")
+    }
+    return(out)
+}
+
+docs$out <- apply(docs, 1, pretty_out)
+
+## Sanitize this
+docs$out <- gsub("#", "\\#", docs$out, fixed = TRUE)
+```
+
+
+```{r prettyprint, eval = TRUE, results = "asis"}
+docs <- subset(docs, year > 2016)
+## Dump it!
+for (i in pretty_names) {
+    tmp <- docs %>%
+        filter(pretty_name == i) %>%
+        arrange(desc(year))
+    tmp <- unique(tmp)
+    if (nrow(tmp) > 0) {
+    cat(i, " {-}\n===\n\n")
+    for (j in 1:nrow(tmp)) {
+        cat(" - ")
+        cat(tmp$out[j])
+        cat("\n\n")
+    }
+    }
+
+}
+```
+
+# About this document... {-}
+
+This document has been produced automatically using the College's
+online repository, PURE ([http://pure.royalholloway.ac.uk](http://pure.royalholloway.ac.uk)). It was last updated on `r Sys.Date()`. If you
+are a member of staff who has written a peer-reviewed publication which has a
+publication date between 2017 and 2020 inclusive, and which is not
+listed here, please update your record on PURE and ask Chris Hanretty to
+recompile this document.

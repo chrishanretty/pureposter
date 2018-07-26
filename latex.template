@@ -1,0 +1,29 @@
+\documentclass[12pt]{article}
+\usepackage{fontspec}
+\usepackage{xeCJK}
+\setCJKmainfont[Scale = 1.5]{Noto Sans CJK SC}
+\setmainfont[BoldFont={Fira Sans},
+Scale = 1.5]{Fira Sans Light}
+\setmonofont[Scale = 1.5]{Fira Code}
+\newcommand{\bigfont}[1]{{%
+  \fontsize{90pt}{140pt}\normalfont #1%
+}}
+
+\usepackage[a0paper,landscape,top=2.5cm, bottom = 1cm, left = 2cm, right = 2cm]{geometry}
+\usepackage{multicol}
+\setlength\columnsep{40pt}
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{6pt}\setlength{\parskip}{2pt}}
+  \usepackage{hyperref}
+  \hyphenpenalty=10000
+\begin{document}
+
+{\bigfont{$title$}}
+\vskip 8em
+\begin{multicols}{5}
+{
+\Large 
+$body$
+}
+\end{multicols}
+\end{document}

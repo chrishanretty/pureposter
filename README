@@ -1,0 +1,8 @@
+This folder contains RMarkdown code to generate a poster of recent
+outputs from current staff in the School of Politics, International
+Relations and Philosophy at Royal Holloway, University of London.
+
+It pulls data from the College's PURE database.
+
+You can customize this to produce something similar for your own
+university.
